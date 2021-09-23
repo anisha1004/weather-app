@@ -1,0 +1,16 @@
+.header {
+  width: 100%;
+  height: 40px;
+  background-color: rgb(228, 48, 252);
+  color: white;
+  font-weight: 600;
+  font-size: 30px;
+  font-family: "Prociono", serif;
+  display: flex;
+  align-items: center;
+}
+
+.header-item {
+  display: flex;
+  padding: 15px;
+}

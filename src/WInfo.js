@@ -59,10 +59,11 @@ function WInfo() {
               <div className="temp">
                 {Math.round(weather.main.temp)}°C
               </div>
-                <div className="weather">{weather.weather[0].main}</div>
+              <div><img src={`http://openweathermap.org/img/w/${weather.weather[0].icon}.png`} className="weather-icon" alt="Not Found" /></div>
+              <div className="weather">{weather.weather[0].main}</div>
               </div>
-              </div>
-            </div>
+             </div>
+           </div>
           ) : ('')}
 
           <Forecast />

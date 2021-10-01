@@ -1,3 +1,6 @@
 .forecast {
-  background-color: aquamarine;
+	background-color: aquamarine;
+}
+.forecast-container {
+	display: flex;
 }

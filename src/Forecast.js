@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Forecast.css";
 import ForecastObj from "./components/ForecastObj";
 
-function Forecast({ forecast }) {
+function Forecast({ forecast, forecastType }) {
 	// const [forecast, setForecast] = useState(null);
 
 	// useEffect(() => {
@@ -19,7 +19,10 @@ function Forecast({ forecast }) {
 	return (
 		<div className='forecast'>
 			<div className='forecast-container'>
-				{forecast && forecast.map((f) => <ForecastObj f={f} />)}
+				{forecast &&
+					forecast.map((f) => (
+						<ForecastObj f={f} forecastType={forecastType} />
+					))}
 			</div>
 		</div>
 	);

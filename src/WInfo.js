@@ -12,6 +12,34 @@ function WInfo() {
 	const [query, setQuery] = useState("");
 	const [weather, setWeather] = useState({});
 	const [forecast, setForecast] = useState(null);
+	const [cityFound, setCityFound] = useState(true);
+	const [forecastType, setForecastType] = useState("daily");
+	const [city, setCity] = useState("");
+
+	function changeForecastType(evt) {
+		setForecastType(evt);
+		fetch(`${api.base}weather?q=${city}&units=metric&APPID=${api.key}`)
+			.then((res) => res.json())
+			.then((result) => {
+				setWeather(result);
+				setQuery("");
+				setCityFound(true);
+				console.log(result);
+
+				result.cod && result.cod === "404" && setForecast(null);
+				result.cod && result.cod === "404" && setCityFound(false);
+				result.cod &&
+					result.cod !== "404" &&
+					fetch(
+						`https://api.openweathermap.org/data/2.5/onecall?lat=${result.coord.lat}&lon=${result.coord.lon}&exclude=minutely,daily&appid=ae9e15e6e0d244b77e6afc4ea6c67a72`
+					)
+						.then((res) => res.json())
+						.then((result) => {
+							setForecast(result.hourly);
+							console.log(result);
+						});
+			});
+	}
 
 	const search = (evt) => {
 		if (evt.key === "Enter") {
@@ -19,17 +47,23 @@ function WInfo() {
 				.then((res) => res.json())
 				.then((result) => {
 					setWeather(result);
+					setCity(query);
 					setQuery("");
+					setCityFound(true);
 					console.log(result);
-				});
 
-			fetch(
-				`https://api.openweathermap.org/data/2.5/onecall?lat=${weather.coord.lat}&lon=${weather.coord.lon}&exclude=minutely,hourly&appid=ae9e15e6e0d244b77e6afc4ea6c67a72`
-			)
-				.then((res) => res.json())
-				.then((result) => {
-					setForecast(result.daily);
-					console.log(result);
+					result.cod && result.cod === "404" && setForecast(null);
+					result.cod && result.cod === "404" && setCityFound(false);
+					result.cod &&
+						result.cod !== "404" &&
+						fetch(
+							`https://api.openweathermap.org/data/2.5/onecall?lat=${result.coord.lat}&lon=${result.coord.lon}&exclude=minutely,hourly&appid=ae9e15e6e0d244b77e6afc4ea6c67a72`
+						)
+							.then((res) => res.json())
+							.then((result) => {
+								setForecast(result.daily);
+								console.log(result);
+							});
 				});
 		}
 	};
@@ -66,6 +100,7 @@ function WInfo() {
 
 		return `${day} ${date} ${month} ${year}`;
 	};
+
 	return (
 		<div
 			className={
@@ -79,7 +114,11 @@ function WInfo() {
 				<input
 					type='text'
 					className='inputBox'
-					placeholder='Search...'
+					placeholder={
+						cityFound
+							? "Search..."
+							: "City not found. Please enter a valid city"
+					}
 					onChange={(e) => setQuery(e.target.value)}
 					value={query}
 					onKeyPress={search}
@@ -111,7 +150,14 @@ function WInfo() {
 				""
 			)}
 
-			{forecast && <Forecast forecast={forecast} />}
+			{forecast && (
+				<select onChange={(e) => changeForecastType(e.target.value)}>
+					<option value='daily'>7 day</option>
+					<option value='hourly'>hourly</option>
+				</select>
+			)}
+
+			{forecast && <Forecast forecast={forecast} forecastType={forecastType} />}
 		</div>
 	);
 }
